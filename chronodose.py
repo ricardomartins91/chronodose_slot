@@ -13,7 +13,7 @@ def chonodose_available(department_number):
     for center in centers_available:
         appointment_schedules = center.get('appointment_schedules', [])
         for schedule in appointment_schedules:
-            if schedule['name'] != "chronodose" or schedule['total'] == 1:
+            if schedule['name'] != "chronodose" or schedule['total'] == 0:
                 continue
 
             available_dose.append({"center_name": center.get('nom'),
