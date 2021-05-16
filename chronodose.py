@@ -1,4 +1,5 @@
 from pushsafer import init, Client
+from time import sleep
 import requests
 
 
@@ -35,31 +36,45 @@ def push_notification(token, user, title, message):
 
 
 def main():
-    department_number = XX
+    department_number = 33
     chronodoses = chonodose_available(department_number)
 
-    token_api = "XXXXXXXXXXXXXXXXXXX"
-    user_api = "XXXXXXXXXXXXXXXXXXXXX"
+    token_api = "a3u4x8nvwpnziymishfjnb6t2jfe7w"
+    user_api = "uwboazed51upvot41beofy7vtjdhuu"
     notif_title = "CHRONODOSE DISPO"
 
     if chronodoses:
         print("Some available slots found")
         for dose in chronodoses:
             notif_msg = f"{dose['center_name']}\n" \
-                        f"{dose['appointment_url']}\n"
+                        f"{dose['appointment_url']}\n" \
+                        f"{dose['maps_url']}\n"
 
             print(notif_msg + "Sending notification...")
 
-            notif = push_notification(token_api,
-                                      user_api,
-                                      notif_title,
-                                      notif_msg)
-            if notif == 200:
-                print("Notification sent.")
+            new_appointment = True
+            with open("./chronodose.log", "r") as f:
+                for line in f:
+                    if dose['appointment_url'] in line:
+                        new_appointment = False
+
+            if new_appointment:
+                with open("./chronodose.log", "w") as f:
+                    f.write(dose['appointment_url'])
+                notif = push_notification(token_api,
+                                          user_api,
+                                          notif_title,
+                                          notif_msg)
+                if notif == 200:
+                    print("Notification sent.")
+                else:
+                    print(f"Notification failed : {notif}")
             else:
-                print(f"Notification failed : {notif}")
+                print("Old appointment. Notification already sent")
             print("------------------------------")
 
 
 if __name__ == "__main__":
-    main()
+    while True:
+        main()
+        sleep(600)
