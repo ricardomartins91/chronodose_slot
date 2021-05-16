@@ -36,11 +36,11 @@ def push_notification(token, user, title, message):
 
 
 def main():
-    department_number = 33
+    department_number = xx
     chronodoses = chonodose_available(department_number)
 
-    token_api = "a3u4x8nvwpnziymishfjnb6t2jfe7w"
-    user_api = "uwboazed51upvot41beofy7vtjdhuu"
+    token_api = "xxxx"
+    user_api = "xxxxx"
     notif_title = "CHRONODOSE DISPO"
 
     if chronodoses:
