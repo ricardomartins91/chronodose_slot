@@ -1,4 +1,3 @@
-from pushsafer import init, Client
 from time import sleep
 import requests
 
