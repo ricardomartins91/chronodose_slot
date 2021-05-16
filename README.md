@@ -8,4 +8,4 @@
 
     token_api = "XXXXXXXXXXXXXXXXXXX"
     user_api = "XXXXXXXXXXXXXXXXXXXXX"
-    department_number = 33
+    department_number = XX
