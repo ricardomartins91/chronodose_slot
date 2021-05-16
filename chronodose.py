@@ -14,11 +14,12 @@ def chonodose_available(department_number):
     for center in centers_available:
         appointment_schedules = center.get('appointment_schedules', [])
         for schedule in appointment_schedules:
-            if schedule['name'] != "chronodose" or schedule['total'] == 0:
+            if schedule['name'] != "chronodose" or schedule['total'] == 1:
                 continue
 
             available_dose.append({"center_name": center.get('nom'),
                                    "center_address": center.get('metadata').get('address'),
+                                   "next_schedule": center.get('prochain_rdv'),
                                    "appointment_url": center.get('url'),
                                    "maps_url": f"http://maps.google.com/maps?q={center.get('location').get('latitude')},"
                                                f"{center.get('location').get('longitude')}"})
@@ -36,31 +37,33 @@ def push_notification(token, user, title, message):
 
 
 def main():
-    department_number = xx
+    department_number = XX
     chronodoses = chonodose_available(department_number)
 
-    token_api = "xxxx"
-    user_api = "xxxxx"
+    token_api = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    user_api = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     notif_title = "CHRONODOSE DISPO"
 
+    log_file = "./chronodose.log"
     if chronodoses:
         print("Some available slots found")
         for dose in chronodoses:
             notif_msg = f"{dose['center_name']}\n" \
-                        f"{dose['appointment_url']}\n" \
+                        f"{dose['appointment_url']}\n\n" \
                         f"{dose['maps_url']}\n"
 
             print(notif_msg + "Sending notification...")
 
             new_appointment = True
-            with open("./chronodose.log", "r") as f:
+            with open(log_file, "r") as f:
                 for line in f:
-                    if dose['appointment_url'] in line:
+                    if f"{dose['appointment_url']} {dose['next_schedule']}" in line:
                         new_appointment = False
+                        continue
 
             if new_appointment:
-                with open("./chronodose.log", "w") as f:
-                    f.write(dose['appointment_url'])
+                with open(log_file, "a") as f:
+                    f.write(f"{dose['appointment_url']} {dose['next_schedule']}\n")
                 notif = push_notification(token_api,
                                           user_api,
                                           notif_title,
@@ -72,9 +75,9 @@ def main():
             else:
                 print("Old appointment. Notification already sent")
             print("------------------------------")
+    else:
+        print("There are no available slots")
 
 
 if __name__ == "__main__":
-    while True:
-        main()
-        sleep(600)
+    main()
